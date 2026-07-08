@@ -26,7 +26,7 @@
     flex-direction: column;
   }
 
-  /* ---------- cabecera tipo grilla suiza ---------- */
+  /* ---------- cabecera ---------- */
   header {
     border-bottom: 3px solid var(--ink);
     display: grid;
@@ -58,7 +58,6 @@
     min-height: 0;
   }
 
-  /* columna del medidor */
   .gauge-col {
     border-right: var(--hairline);
     display: flex;
@@ -99,7 +98,6 @@
     transition: height 1.8s cubic-bezier(.6, 0, .2, 1);
   }
 
-  /* columna de contenido */
   .content {
     display: flex;
     flex-direction: column;
@@ -135,59 +133,110 @@
   .quote-block {
     flex: 1;
     padding: 28px 24px;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 20px;
   }
   .quote {
-    font-size: clamp(1.1rem, 2.6vw, 1.7rem);
+    font-size: clamp(1.05rem, 2.4vw, 1.6rem);
     font-weight: 700;
     line-height: 1.35;
-    max-width: 32ch;
-    min-height: 3em;
-  }
-  .attribution {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
+    max-width: 30ch;
+    transition: opacity .4s ease;
   }
 
+  /* ---------- sticker ---------- */
+  .sticker {
+    width: clamp(90px, 16vw, 150px);
+    height: clamp(90px, 16vw, 150px);
+    transform: rotate(-7deg);
+    filter: drop-shadow(4px 4px 0 rgba(0,0,0,.9));
+    opacity: 0;
+    transition: opacity .4s ease, transform .4s cubic-bezier(.34, 1.56, .64, 1);
+    scale: .6;
+  }
+  .sticker.visible {
+    opacity: 1;
+    scale: 1;
+  }
+  .sticker img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    /* borde blanco tipo sticker */
+    filter:
+      drop-shadow(2px 0 0 #fff) drop-shadow(-2px 0 0 #fff)
+      drop-shadow(0 2px 0 #fff) drop-shadow(0 -2px 0 #fff);
+  }
+  /* placeholder mientras no está el PNG */
+  .sticker .placeholder {
+    width: 100%;
+    height: 100%;
+    border: 3px dashed var(--ink);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    line-height: 1.5;
+    padding: 10px;
+    background: var(--paper);
+  }
+
+  /* ---------- acciones ---------- */
   .action-row {
     border-top: 3px solid var(--ink);
     display: grid;
     grid-template-columns: 1fr auto;
   }
 
-  button {
+  .btn {
     font-family: var(--font);
-    font-size: clamp(1.2rem, 3vw, 1.8rem);
     font-weight: 700;
     text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+  }
+
+  #btn {
+    font-size: clamp(1.2rem, 3vw, 1.8rem);
     letter-spacing: 0.3em;
     background: var(--ink);
     color: var(--paper);
-    border: none;
     padding: 22px;
-    cursor: pointer;
   }
-  button:hover { background: var(--paper); color: var(--ink); box-shadow: inset 0 0 0 3px var(--ink); }
-  button:active { letter-spacing: 0.5em; }
-  button:focus-visible { outline: 3px dashed var(--ink); outline-offset: -8px; }
-  button:disabled { opacity: 0.4; cursor: wait; }
+  #btn:hover:not(:disabled) { background: var(--paper); color: var(--ink); box-shadow: inset 0 0 0 3px var(--ink); }
+  #btn:focus-visible { outline: 3px dashed var(--ink); outline-offset: -8px; }
+  #btn:disabled { cursor: default; letter-spacing: 0.15em; font-size: clamp(0.9rem, 2.2vw, 1.3rem); }
 
-  .counter-box {
+  #share {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    background: var(--paper);
+    color: var(--ink);
     border-left: var(--hairline);
     padding: 12px 24px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    display: none;
+  }
+  #share:hover { background: var(--ink); color: var(--paper); }
+  #share.visible { display: block; }
+
+  .countdown {
+    border-top: var(--hairline);
+    padding: 10px 24px;
     font-size: 10px;
     text-transform: uppercase;
-    letter-spacing: 0.15em;
-    line-height: 1.7;
+    letter-spacing: 0.2em;
+    display: none;
+    justify-content: space-between;
   }
-  .counter-box b { font-size: 16px; }
+  .countdown.visible { display: flex; }
+  .countdown b { font-variant-numeric: tabular-nums; }
 
   footer {
     border-top: var(--hairline);
@@ -200,15 +249,22 @@
   }
 
   @media (max-width: 560px) {
-    main { grid-template-columns: 110px 1fr; }
+    main { grid-template-columns: 100px 1fr; }
     .gauge-col { padding: 14px; }
-    .reading-row, .quote-block { padding: 16px; }
+    .reading-row { padding: 16px; }
+    .quote-block {
+      grid-template-columns: 1fr;
+      padding: 16px;
+      gap: 12px;
+      justify-items: start;
+    }
+    .sticker { justify-self: end; margin-top: -20px; }
     .quote { font-size: 1rem; }
-    .counter-box { display: none; }
   }
 
   @media (prefers-reduced-motion: reduce) {
     .fill { transition: height 0.2s linear; }
+    .sticker { transition: opacity 0.2s linear; }
   }
 </style>
 </head>
@@ -217,7 +273,7 @@
 <header>
   <h1>Cazador<br>de utopías</h1>
   <div class="meta">
-    Medición diaria<br>
+    Una utopía por día<br>
     Escala 01–100<br>
     <span id="date"></span>
   </div>
@@ -236,44 +292,64 @@
 
   <div class="content">
     <div class="reading-row">
-      <span class="label">Utopía del día</span>
+      <span class="label">Utopía de hoy</span>
       <span class="number"><span id="number">00</span><small>%</small></span>
     </div>
 
     <div class="quote-block">
-      <p class="quote" id="quote">Apretá el botón. La utopía no se caza sola.</p>
-      <p class="attribution" id="attribution">— Sistema</p>
+      <p class="quote" id="quote">La utopía de hoy todavía está suelta.</p>
+      <div class="sticker" id="sticker">
+        <!-- Cuando tengas el PNG: borrá el div.placeholder y descomentá el img -->
+        <!-- <img src="alfaro.png" alt="Gustavo Alfaro"> -->
+        <div class="placeholder">Acá va<br>alfaro.png</div>
+      </div>
     </div>
 
     <div class="action-row">
-      <button id="btn" onclick="cazar()">Cazar</button>
-      <div class="counter-box">
-        Cacerías<br>
-        <b id="count">0</b>
-      </div>
+      <button class="btn" id="btn" onclick="cazar()">Cazar</button>
+      <button class="btn visible" id="share" onclick="compartir()">Compartir ↗</button>
+    </div>
+
+    <div class="countdown" id="countdown">
+      <span>Próxima utopía en</span>
+      <b id="timer">--:--:--</b>
     </div>
   </div>
 </main>
 
 <footer>
-  <span>Cazador de utopías v2.0</span>
-  <span>Blanco / Negro / Comic Sans</span>
+  <span>Cazador de utopías v3.0</span>
+  <span>Una utopía por día. No insista.</span>
 </footer>
 
 <script>
   const hoy = new Date();
-  document.getElementById('date').textContent =
-    hoy.toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  const fechaCorta = hoy.toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  document.getElementById('date').textContent = fechaCorta;
 
   const fill = document.getElementById('fill');
   const number = document.getElementById('number');
   const quote = document.getElementById('quote');
-  const attribution = document.getElementById('attribution');
+  const sticker = document.getElementById('sticker');
   const btn = document.getElementById('btn');
-  const countEl = document.getElementById('count');
-  let cacerias = 0;
+  const shareBtn = document.getElementById('share');
+  const countdownEl = document.getElementById('countdown');
+  const timerEl = document.getElementById('timer');
 
-  // Frases reales de Gustavo Alfaro, por rango de utopía
+  let utopiaDelDia = null;
+  shareBtn.classList.remove('visible'); // arranca oculto
+
+  // ---------- semilla diaria: mismo número para todos, todo el día ----------
+  function semillaDiaria() {
+    const clave = hoy.getFullYear() + '-' + (hoy.getMonth() + 1) + '-' + hoy.getDate();
+    let hash = 0;
+    for (let i = 0; i < clave.length; i++) {
+      hash = ((hash << 5) - hash + clave.charCodeAt(i)) | 0;
+    }
+    return (Math.abs(hash) % 100) + 1; // 1 a 100
+  }
+
+  // ---------- frases reales de Alfaro por rango ----------
   function frase(v) {
     if (v <= 20) return '“Éramos Bruce Willis en Sexto Sentido: nos daban por muertos.”';
     if (v <= 40) return '“Es más fácil desactivar un átomo que un preconcepto.”';
@@ -283,34 +359,133 @@
   }
 
   function cazar() {
-    const objetivo = Math.floor(Math.random() * 100) + 1; // 1 a 100
+    utopiaDelDia = semillaDiaria();
     btn.disabled = true;
-    cacerias++;
-    countEl.textContent = cacerias;
-
+    btn.textContent = 'Cazada por hoy';
     quote.style.opacity = 0.15;
-    attribution.style.opacity = 0.15;
 
-    fill.style.height = objetivo + '%';
+    fill.style.height = utopiaDelDia + '%';
 
-    const inicio = parseInt(number.textContent, 10) || 0;
     const dur = 1700;
     const t0 = performance.now();
     function paso(t) {
       const p = Math.min((t - t0) / dur, 1);
       const ease = 1 - Math.pow(1 - p, 3);
-      const val = Math.round(inicio + (objetivo - inicio) * ease);
+      const val = Math.round(utopiaDelDia * ease);
       number.textContent = String(val).padStart(2, '0');
       if (p < 1) requestAnimationFrame(paso);
       else {
-        quote.textContent = frase(objetivo);
-        attribution.textContent = '— Gustavo Alfaro, DT';
+        quote.textContent = frase(utopiaDelDia);
         quote.style.opacity = 1;
-        attribution.style.opacity = 1;
-        btn.disabled = false;
+        sticker.classList.add('visible');
+        shareBtn.classList.add('visible');
+        countdownEl.classList.add('visible');
       }
     }
     requestAnimationFrame(paso);
+  }
+
+  // ---------- countdown a medianoche ----------
+  setInterval(() => {
+    const ahora = new Date();
+    const medianoche = new Date(ahora);
+    medianoche.setHours(24, 0, 0, 0);
+    const diff = medianoche - ahora;
+    const h = String(Math.floor(diff / 3600000)).padStart(2, '0');
+    const m = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
+    const s = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
+    timerEl.textContent = h + ':' + m + ':' + s;
+  }, 1000);
+
+  // ---------- compartir como imagen (formato story 1080x1920) ----------
+  async function compartir() {
+    if (utopiaDelDia === null) return;
+
+    const c = document.createElement('canvas');
+    c.width = 1080;
+    c.height = 1920;
+    const ctx = c.getContext('2d');
+    const F = '"Comic Sans MS", "Comic Neue", cursive';
+
+    // fondo
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, 1080, 1920);
+    ctx.fillStyle = '#000000';
+    ctx.strokeStyle = '#000000';
+
+    // marco
+    ctx.lineWidth = 12;
+    ctx.strokeRect(40, 40, 1000, 1840);
+
+    // header
+    ctx.font = 'bold 92px ' + F;
+    ctx.textAlign = 'left';
+    ctx.fillText('CAZADOR', 100, 220);
+    ctx.fillText('DE UTOPÍAS', 100, 320);
+    ctx.lineWidth = 8;
+    ctx.beginPath(); ctx.moveTo(100, 380); ctx.lineTo(980, 380); ctx.stroke();
+
+    ctx.font = '32px ' + F;
+    ctx.fillText('UTOPÍA DEL ' + fechaCorta, 100, 450);
+
+    // número gigante
+    ctx.font = 'bold 460px ' + F;
+    ctx.textAlign = 'center';
+    ctx.fillText(String(utopiaDelDia).padStart(2, '0'), 500, 1000);
+    ctx.font = 'bold 120px ' + F;
+    ctx.fillText('%', 880, 1000);
+
+    // barra de progreso
+    ctx.lineWidth = 6;
+    ctx.strokeRect(100, 1100, 880, 70);
+    ctx.fillRect(100, 1100, 880 * utopiaDelDia / 100, 70);
+
+    // frase (con salto de línea)
+    ctx.font = 'bold 52px ' + F;
+    ctx.textAlign = 'left';
+    const texto = frase(utopiaDelDia);
+    const palabras = texto.split(' ');
+    let linea = '', y = 1320;
+    for (const p of palabras) {
+      const test = linea + p + ' ';
+      if (ctx.measureText(test).width > 880 && linea) {
+        ctx.fillText(linea.trim(), 100, y);
+        linea = p + ' ';
+        y += 70;
+      } else linea = test;
+    }
+    ctx.fillText(linea.trim(), 100, y);
+
+    ctx.font = '34px ' + F;
+    ctx.fillText('— GUSTAVO ALFARO, DT', 100, y + 90);
+
+    // footer
+    ctx.lineWidth = 4;
+    ctx.beginPath(); ctx.moveTo(100, 1760); ctx.lineTo(980, 1760); ctx.stroke();
+    ctx.font = '28px ' + F;
+    ctx.fillText('UNA UTOPÍA POR DÍA. NO INSISTA.', 100, 1815);
+    ctx.textAlign = 'right';
+    ctx.fillText('TTOMMAS.GITHUB.IO', 980, 1815);
+
+    // compartir o descargar
+    c.toBlob(async (blob) => {
+      const archivo = new File([blob], 'utopia-' + fechaCorta.replaceAll('/', '-') + '.png', { type: 'image/png' });
+      if (navigator.canShare && navigator.canShare({ files: [archivo] })) {
+        try {
+          await navigator.share({
+            files: [archivo],
+            title: 'Cazador de Utopías',
+            text: 'La utopía de hoy: ' + utopiaDelDia + '%'
+          });
+        } catch (e) { /* usuario canceló, no pasa nada */ }
+      } else {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = archivo.name;
+        a.click();
+        URL.revokeObjectURL(a.href);
+      }
+    }, 'image/png');
   }
 </script>
 
